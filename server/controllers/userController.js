@@ -42,3 +42,8 @@ export const login = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 }
+
+export const checkAuth = (req,res)=>{
+    res.json({success:true, user: req.user, message: "User is authenticated"});
+}
+
