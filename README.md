@@ -127,8 +127,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Sameer Gupta**
-- GitHub: [@your-github-username](https://github.com/your-username)
-- LinkedIn: [Your LinkedIn Profile](https://linkedin.com/in/your-profile)
+- GitHub: [@sam-eer12](https://github.com/sam-eer12)
+- LinkedIn: [sameer-gupta-768b28312](https://linkedin.com/in/sameer-gupta-768b28312/)
 
 ## 🙏 Acknowledgments
 
