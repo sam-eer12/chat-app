@@ -1,18 +1,32 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import assets from '../assets/assets';
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 
 const ProfilePage = () => {
+  const { authUser, updateProfile}= useContext(AuthContext);
 
   const [selectedImg, setSelectedImg] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
-  const [name, setName] = useState("Sameer Gupta");
-  const [bio, setBio] = useState("Hire me 🥺🥺");
+  const [name, setName] = useState(authUser.fullName);
+  const [bio, setBio] = useState(authUser.bio);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/')
+    if (!selectedImg){
+      await updateProfile({fullName:name,bio});
+      navigate('/')
+    }
+    
+    const reader = new FileReader();
+    reader.readAsDataURL(selectedImg);
+    reader.onload = async ()=>{
+      const base64Image = reader.result;
+      await updateProfile({profilePic: base64Image, fullName:name,bio});
+      navigate('/')
+    }
   }
   return (
     <div className='min-h-screen flex bg-cover bg-no-repeat items-center justify-center'>

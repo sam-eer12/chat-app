@@ -4,14 +4,22 @@ A modern, real-time chat application built with the MERN stack (MongoDB, Express
 
 ## ✨ Features
 
-- **Real-time messaging** - Instant communication powered by Socket.io
-- **User authentication** - Secure login and registration system
-- **Profile management** - Customizable user profiles with avatar uploads
-- **Responsive design** - Works seamlessly on desktop and mobile devices
-- **Modern UI** - Clean and intuitive interface built with React and Tailwind CSS
-- **File sharing** - Upload and share images in conversations
-- **Online status** - See who's currently online
-- **Chat rooms** - Create and join different chat rooms
+### Core Features
+- ✅ **Friend request system** - Send, accept, or reject friend requests before chatting
+- ✅ **Real-time messaging** - Instant communication powered by Socket.io
+- ✅ **User authentication** - Secure JWT-based login and registration
+- ✅ **Profile management** - Update name, bio, and profile picture with Cloudinary
+- ✅ **Responsive design** - Works seamlessly on desktop and mobile devices
+- ✅ **Modern UI** - Beautiful gradient design with Tailwind CSS
+- ✅ **Image sharing** - Upload and share images in conversations
+- ✅ **Online status** - Real-time online/offline indicators
+- ✅ **User search** - Search users by name or email to add as friends
+- ✅ **Unseen messages** - Notification badges for unread messages
+- ✅ **Message history** - View all past messages with any user
+- ✅ **Media gallery** - Browse all shared images in right sidebar
+- ✅ **Auto-scroll** - Automatically scroll to newest messages
+- ✅ **Image preview** - Preview images before sending
+- ✅ **Tabbed interface** - Separate tabs for Chats and Friend Requests
 
 ## 🛠️ Tech Stack
 
@@ -20,22 +28,31 @@ A modern, real-time chat application built with the MERN stack (MongoDB, Express
 - **Vite** ^7.1.7 - Fast build tool and development server
 - **Tailwind CSS** ^4.1.14 - Utility-first CSS framework
 - **React Router DOM** ^7.9.3 - Client-side routing
+- **Socket.io Client** ^4.8.1 - Real-time communication
+- **Axios** ^1.12.2 - HTTP client for API requests
+- **React Hot Toast** ^2.6.0 - Beautiful notifications
 
 ### Backend
 - **Node.js** - JavaScript runtime environment
-- **Express.js** - Web application framework
-- **MongoDB** - NoSQL database
-- **Socket.io** - Real-time bidirectional event-based communication
-- **Mongoose** - MongoDB object modeling
+- **Express.js** ^5.1.0 - Web application framework
+- **MongoDB** with **Mongoose** ^8.19.0 - NoSQL database and ODM
+- **Socket.io** ^4.8.1 - Real-time bidirectional communication
+- **JWT** ^9.0.2 - Secure authentication tokens
+- **Bcryptjs** ^3.0.2 - Password hashing
+- **Cloudinary** ^2.7.0 - Cloud-based image management
+- **CORS** ^2.8.5 - Cross-origin resource sharing
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js (v14 or higher)
-- MongoDB
+- MongoDB (local or MongoDB Atlas)
+- Cloudinary account (for image uploads)
 - npm or yarn package manager
 
-### Installation
+### Quick Start
+
+📖 **For detailed setup instructions, see [SETUP_GUIDE.md](SETUP_GUIDE.md)**
 
 1. **Clone the repository**
    ```bash
@@ -43,34 +60,41 @@ A modern, real-time chat application built with the MERN stack (MongoDB, Express
    cd chat-app
    ```
 
-2. **Install client dependencies**
+2. **Install server dependencies**
+   ```bash
+   cd server
+   npm install
+   ```
+
+3. **Set up server environment**
+   Create a `.env` file in the server directory (see `.env.example`):
+   ```env
+   PORT=5000
+   MONGODB_URI=mongodb://localhost:27017
+   JWT_SECRET=your-super-secret-jwt-key
+   CLOUDINARY_CLOUD_NAME=your-cloud-name
+   CLOUDINARY_API_KEY=your-api-key
+   CLOUDINARY_API_SECRET=your-api-secret
+   ```
+
+4. **Start the server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Install client dependencies** (in new terminal)
    ```bash
    cd client
    npm install
    ```
 
-3. **Install server dependencies** (when server is added)
-   ```bash
-   cd ../server
-   npm install
-   ```
-
-4. **Set up environment variables**
-   Create a `.env` file in the server directory and add:
+6. **Set up client environment**
+   Create a `.env` file in the client directory (see `.env.example`):
    ```env
-   PORT=5000
-   MONGODB_URI=mongodb://localhost:27017/chatapp
-   JWT_SECRET=your-secret-key
+   VITE_BACKEND_URL=http://localhost:5000
    ```
 
-5. **Start the development servers**
-   
-   **Client (in client directory):**
-   ```bash
-   npm run dev
-   ```
-   
-   **Server (in server directory):**
+7. **Start the client**
    ```bash
    npm run dev
    ```
@@ -81,36 +105,69 @@ The client will run on `http://localhost:5173` and the server on `http://localho
 
 ```
 chat-app/
-├── client/                 # React frontend
+├── client/                     # React frontend
+│   ├── context/               # React Context providers
+│   │   ├── AuthContext.jsx   # Authentication & Socket.io
+│   │   └── ChatContext.jsx   # Chat messaging state
 │   ├── src/
-│   │   ├── components/     # Reusable React components
+│   │   ├── components/       # Reusable React components
 │   │   │   ├── ChatContainer.jsx
 │   │   │   ├── RightSidebar.jsx
 │   │   │   └── SideBar.jsx
-│   │   ├── pages/          # Page components
+│   │   ├── pages/           # Page components
 │   │   │   ├── Home.jsx
 │   │   │   ├── Login.jsx
 │   │   │   └── ProfilePage.jsx
-│   │   ├── assets/         # Images and static files
-│   │   ├── lib/            # Utility functions
-│   │   └── App.jsx         # Main App component
-│   ├── public/             # Static assets
+│   │   ├── assets/          # Images and static files
+│   │   ├── lib/             # Utility functions
+│   │   └── App.jsx          # Main App component
+│   ├── public/              # Static assets
 │   └── package.json
-├── server/                 # Node.js backend (to be added)
-└── README.md
+│
+├── server/                   # Node.js backend
+│   ├── controllers/         # Request handlers
+│   │   ├── userController.js
+│   │   ├── messageController.js
+│   │   └── friendController.js    # Friend requests ✨
+│   ├── models/              # MongoDB schemas
+│   │   ├── User.js          # Updated with friends ✨
+│   │   └── message.js
+│   ├── routes/              # API routes
+│   │   ├── userRoutes.js
+│   │   ├── messageRoutes.js
+│   │   └── friendRoutes.js        # Friend request routes ✨
+│   ├── middleware/          # Custom middleware
+│   │   └── auth.js
+│   ├── lib/                 # Utilities
+│   │   ├── db.js           # MongoDB connection
+│   │   ├── cloudinary.js   # Image upload config
+│   │   └── utils.js        # JWT generation
+│   ├── server.js           # Server entry & Socket.io
+│   └── package.json
+│
+├── SETUP_GUIDE.md               # Detailed setup instructions
+├── FRIEND_REQUEST_FEATURE.md    # Friend request system docs ✨
+└── README.md                    # Project overview
 ```
 
 ## 🎮 Usage
 
-1. **Register/Login** - Create a new account or log in with existing credentials
-2. **Set up profile** - Upload an avatar and add a bio in the profile page
-3. **Start chatting** - Join chat rooms and start messaging other users
-4. **Share media** - Upload and share images in your conversations
-5. **Stay connected** - See who's online and get real-time notifications
+1. **Register/Login** - Create a new account with email, password, name, and bio
+2. **Set up profile** - Upload an avatar and update your bio in the profile page
+3. **Add friends** - Switch to "Requests" tab, search for users, and send friend requests
+4. **Accept requests** - Check "Requests" tab for pending requests and accept/reject them
+5. **Start chatting** - Once friends, they appear in "Chats" tab - click to start messaging
+6. **Send messages** - Type messages and press Enter to send
+7. **Share images** - Click the gallery icon to upload and share images
+8. **Search friends** - Use the search bar in Chats tab to find specific friends
+9. **Online status** - See real-time online/offline status of friends
+10. **Logout** - Click menu icon > Logout or use the logout button in right sidebar
+
+📖 **For detailed friend request usage, see [FRIEND_REQUEST_FEATURE.md](FRIEND_REQUEST_FEATURE.md)**
 
 ## 📱 Screenshots
 
-*Screenshots will be added once the application is complete*
+*Screenshots will be added once screenshots are available*
 
 ## 🤝 Contributing
 

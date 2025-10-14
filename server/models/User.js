@@ -6,6 +6,9 @@ const userSchema = new mongoose.Schema({
     password: {type: String, required: true, minLength: 6},
     profilePic: {type: String, default: ""},
     bio: {type: String},
+    friends: [{type: mongoose.Schema.Types.ObjectId, ref: "User", default: []}],
+    friendRequestsSent: [{type: mongoose.Schema.Types.ObjectId, ref: "User", default: []}],
+    friendRequestsReceived: [{type: mongoose.Schema.Types.ObjectId, ref: "User", default: []}],
 }, {timestamps: true});
 
 const User = mongoose.model("User", userSchema);

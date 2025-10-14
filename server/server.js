@@ -3,14 +3,43 @@ import "dotenv/config";
 import cors from 'cors';
 import http from 'http';
 import { connectDB } from './lib/db.js';
+import userRouter from './routes/userRoutes.js';
+import messageRouter from './routes/messageRoutes.js';
+import friendRouter from './routes/friendRoutes.js';
+import { Server } from 'socket.io';
 
 const app = express();
 const server  = http.createServer(app);
+export const io = new Server(server, {
+    cors:{
+        origin: "*"
+    }
+});
+
+export const userSocketMap = {};
+
+io.on("connection", (socket)=>{
+    const userId = socket.handshake.query.userId;
+    console.log("User connected with ID:", userId);
+    if (userId) userSocketMap[userId] = socket.id;
+
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+    socket.on("disconnect",()=>{
+        console.log("User disconnected with ID:", userId);
+        delete userSocketMap[userId];
+        io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    })
+})
 
 app.use(express.json({limit: '4mb'}));
 app.use(cors());
 
 app.use('/api/status',(req,res)=> res.send("Server is running fine!"));
+
+app.use('/api/auth', userRouter);
+app.use('/api/messages', messageRouter);
+app.use('/api/friends', friendRouter);
 
 await connectDB();
 
