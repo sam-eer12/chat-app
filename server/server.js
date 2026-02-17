@@ -1,51 +1,36 @@
 import express from 'express';
 import "dotenv/config";
 import cors from 'cors';
-import http from 'http';
 import { connectDB } from './lib/db.js';
 import userRouter from './routes/userRoutes.js';
 import messageRouter from './routes/messageRoutes.js';
 import friendRouter from './routes/friendRoutes.js';
-import { Server } from 'socket.io';
 
-const app = express();
-const server  = http.createServer(app);
-export const io = new Server(server, {
-    cors:{
-        origin: "*"
-    }
-});
+// Import app and server from the new socket file
+import { app, server } from './lib/socket.js';
 
-export const userSocketMap = {};
+const PORT = process.env.PORT || 5000;
 
-io.on("connection", (socket)=>{
-    const userId = socket.handshake.query.userId;
-    console.log("User connected with ID:", userId);
-    if (userId) userSocketMap[userId] = socket.id;
-
-    io.emit("getOnlineUsers", Object.keys(userSocketMap));
-
-    socket.on("disconnect",()=>{
-        console.log("User disconnected with ID:", userId);
-        delete userSocketMap[userId];
-        io.emit("getOnlineUsers", Object.keys(userSocketMap));
-    })
-})
-
-app.use(express.json({limit: '4mb'}));
-app.use(cors());
+// Middleware
+app.use(express.json({ limit: '4mb' }));
+app.use(cors({
+  origin: process.env.FRONTEND_URI, // Match your frontend URL in production
+  credentials: true
+}));
 
 app.get('/', (req, res) => {
   res.send('Server is running');
 });
 
-app.use('/api/status',(req,res)=> res.send("Server is running fine!"));
+app.use('/api/status', (req, res) => res.send("Server is running fine!"));
 
+// Routes
 app.use('/api/auth', userRouter);
 app.use('/api/messages', messageRouter);
 app.use('/api/friends', friendRouter);
 
-await connectDB();
-
-const PORT = process.env.PORT || 5000; 
-server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+// Start Server
+server.listen(PORT, () => {
+  connectDB();
+  console.log(`Server is running on port ${PORT}`);
+});
